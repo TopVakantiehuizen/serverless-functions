@@ -1,4 +1,4 @@
-name: Serverless deploy Service
+name: Serverless remove Service
 env:
   SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
@@ -33,12 +33,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy service to AWS
+      - name: Remove service from AWS
         run: |
           npx serverless config credentials \
           --provider aws \
           --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
           --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           
-          npx serverless deploy \
+          npx serverless remove \
           --stage ${{ github.event.inputs.stage }}
