@@ -24,8 +24,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: serverless-availability-api/package-lock.json
 
-    #- run: cd serverless-availability-api && npm ci
-
     - run: |
         cd serverless-availability-api && npm ci \
         && serverless config credentials \
