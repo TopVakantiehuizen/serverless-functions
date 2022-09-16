@@ -1,4 +1,3 @@
-org: aaron5670
 console: true
 service: aws-listings-api
 frameworkVersion: '3'
