@@ -37,7 +37,6 @@ jobs:
           --provider aws \
           --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
           --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-
-      - run: |
+          
           npx serverless deploy \
           --stage ${{ github.event.inputs.stage }}
