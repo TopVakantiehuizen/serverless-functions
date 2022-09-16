@@ -27,6 +27,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: serverless-availability-api/package-lock.json
 
-    - run: npm ci
+    - run: npm install
     
     - run: serverless deploy --stage ${{ github.event.inputs.stage }} -p aws -k ${{ secrets.AWS_ACCESS_KEY_ID }} -s ${{ secrets.AWS_SECRET_ACCESS_KEY }}
