@@ -1,4 +1,6 @@
 name: Serverless Deploy
+env:
+  SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
 
 on:
   workflow_dispatch:
@@ -17,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
+        # can be a dynamic path, so we can reuse this workflow for multiple serverless functions
         working-directory: serverless-availability-api
 
     steps:
@@ -28,9 +31,6 @@ jobs:
           cache-dependency-path: serverless-availability-api/package-lock.json
 
       - run: npm ci
-
-      - run: ls
-      - run: pwd
 
       - run: |
           npx serverless config credentials \
