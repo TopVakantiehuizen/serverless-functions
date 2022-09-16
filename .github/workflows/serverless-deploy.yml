@@ -1,6 +1,12 @@
 name: Serverless Deploy
 
-on:
+on: 
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Environment stage'     
+        required: true
+        default: 'dev'
   push:
     branches: [ "main" ]
     paths:
@@ -26,7 +32,7 @@ jobs:
     - name: serverless deploy
       uses: tegud/serverless-github-action@1.52.0
       with:
-        command: deploy
+        command: deploy --stage ${{ github.event.inputs.logLevel }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
