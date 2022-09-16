@@ -1,0 +1,32 @@
+name: Serverless Deploy
+
+on: 
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Environment stage'     
+        required: true
+        default: 'dev'
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'serverless-availability-api/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: serverless-availability-api
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+        cache-dependency-path: serverless-availability-api/package-lock.json
+
+    - run: npm ci
+    
+    - run: serverless deploy --stage ${{ github.event.inputs.stage }} -p aws -k ${{ secrets.AWS_ACCESS_KEY_ID }} -s ${{ secrets.AWS_SECRET_ACCESS_KEY }}
