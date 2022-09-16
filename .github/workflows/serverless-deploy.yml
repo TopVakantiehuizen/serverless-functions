@@ -15,25 +15,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: serverless-availability-api
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-        cache-dependency-path: serverless-availability-api/package-lock.json
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: serverless-availability-api/package-lock.json
 
-    - run: |
-        cd serverless-availability-api && npm ci \
-        && serverless config credentials \
-        --provider aws \
-        --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
-        --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-        && serverless deploy \
-        --stage ${{ github.event.inputs.stage }}
+      - run: npm ci
 
-    - run: |
-        cd serverless-availability-api && \
-        serverless deploy \
-        --stage ${{ github.event.inputs.stage }}
+      - run: ls
+      - run: pwd
+
+      - run: |
+          npx serverless config credentials \
+          --provider aws \
+          --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+          --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+          && serverless deploy \
+          --stage ${{ github.event.inputs.stage }}
+
+      - run: |
+          npx serverless deploy \
+          --stage ${{ github.event.inputs.stage }}
