@@ -2,6 +2,7 @@ name: Serverless deploy Service
 
 env:
   WORKING_DIRECTORY: "serverless-availability-api"
+  PACKAGE_LOCK_DIRECTORY: "serverless-availability-api/package-lock.json"
   REPOSITORY: 'TopVakantiehuizen/serverless-functions'
 
 on:
@@ -39,7 +40,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-          cache-dependency-path: "$WORKING_DIRECTORY/package-lock.json"
+          cache-dependency-path: ${{ PACKAGE_LOCK_DIRECTORY }}
 
       - name: Install dependencies
         run: npm ci
