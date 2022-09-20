@@ -10,7 +10,7 @@ on:
     inputs:
       stage:
         description: 'Environment stage'
-        required: true
+        required: false
         default: 'dev'
   pull_request:
     types: [opened]
