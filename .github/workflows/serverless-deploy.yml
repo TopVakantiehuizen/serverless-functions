@@ -10,15 +10,16 @@ on:
     inputs:
       stage:
         description: 'Environment stage'
-        required: false
+        required: true
         default: 'dev'
+
   pull_request:
     types: [opened]
 #     paths: 
 #       - '$WORKING_DIRECTORY/**'
 
 jobs:
-  build:
+  deployment:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,22 +46,59 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy service to AWS
-        run: |
-          npx serverless config credentials \
-          --provider aws \
-          --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
-          --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          
-          npx serverless deploy \
-          --stage ${{ github.event.inputs.stage }}
+      - name: Deploy service to [STAGING] AWS
+        if: "${{ github.event.inputs.stage == '' }}"
+        uses: mathiasvr/command-output@v1
+        id: deployment_dev
+        with:
+          run: |
+            npx serverless config credentials \
+            --provider aws \
+            --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+
+            npx serverless deploy \
+            --stage dev
+
+      - name: Deploy service to [MANUAL] AWS
+        if: "${{ github.event.inputs.stage != '' }}"
+        uses: mathiasvr/command-output@v1
+        id: deployment_manual
+        with:
+          run: |
+            npx serverless config credentials \
+            --provider aws \
+            --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+
+            npx serverless deploy \
+            --stage ${{ github.event.inputs.stage }}
+
+      - run: echo Command succeeded
+        if: ${{ steps.deployment_dev.outputs.stdout }}
+
+      - run: echo Command failed
+        if: ${{ steps.cmd.outputs.stderr }}
 
       - name: Notify about the result of this deployment 
+        if: ${{ steps.deployment_dev.outputs.stdout }}
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ env.REPOSITORY }}
           number: ${{ github.event.number }}
           id: deploy-preview
-          message: 'Deployment of a preview for this pull request was successful.'
+          message: ${{ steps.deployment_dev.outputs.stdout }} 
+          append: true
+
+
+      - name: Notify about the result of this deployment 
+        if: ${{ steps.deployment_manual.outputs.stdout }}
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ env.REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: ${{ steps.deployment_manual.outputs.stdout }} 
           append: true
