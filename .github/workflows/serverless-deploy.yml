@@ -1,5 +1,9 @@
 name: Serverless deploy Service
 
+env:
+  WORKING_DIRECTORY: 'serverless-availability-api'
+  REPOSITORY: 'TopVakantiehuizen/serverless-functions'
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,10 +11,10 @@ on:
         description: 'Environment stage'
         required: true
         default: 'dev'
-#  push:
-#    branches: [ "main" ]
-#    paths:
-#      - 'serverless-availability-api/**'
+  pull_request:
+    types: [opened]
+#     paths: 
+#       - '$WORKING_DIRECTORY/**'
 
 jobs:
   build:
@@ -18,15 +22,24 @@ jobs:
     defaults:
       run:
         # can be a dynamic path, so we can reuse this workflow for multiple serverless functions
-        working-directory: serverless-availability-api
+        working-directory: ${{ WORKING_DIRECTORY }}
 
     steps:
+      - name: Notify about starting this deployment 
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: 'Starting deployment of this pull request.'
+
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: 'npm'
-          cache-dependency-path: serverless-availability-api/package-lock.json
+          cache-dependency-path: "$WORKING_DIRECTORY/package-lock.json"
 
       - name: Install dependencies
         run: npm ci
@@ -40,3 +53,13 @@ jobs:
           
           npx serverless deploy \
           --stage ${{ github.event.inputs.stage }}
+
+      - name: Notify about the result of this deployment 
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: 'Deployment of a preview for this pull request was successful.'
+          append: true
