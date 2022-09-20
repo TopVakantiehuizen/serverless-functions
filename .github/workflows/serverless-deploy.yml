@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-          cache-dependency-path: ${{ PACKAGE_LOCK_DIRECTORY }}
+          cache-dependency-path: ${{ env.PACKAGE_LOCK_DIRECTORY }}
 
       - name: Install dependencies
         run: npm ci
