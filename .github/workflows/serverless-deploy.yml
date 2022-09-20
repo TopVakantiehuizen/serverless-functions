@@ -52,18 +52,12 @@ jobs:
         id: deployment_dev
         with:
           run: |
-            ls \
-            pwd \
-          
-            npx serverless config credentials \
+            cd serverless-availability-api && npx serverless config credentials \
             --provider aws \
             --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
             --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            
-            ls \
-            pwd \
 
-            npx serverless deploy \
+            cd serverless-availability-api && npx serverless deploy \
             --stage dev
 
       - name: Deploy service to [MANUAL] AWS
