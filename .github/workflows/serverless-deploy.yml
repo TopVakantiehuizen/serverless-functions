@@ -57,7 +57,7 @@ jobs:
             --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
             --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
 
-            cd serverless-availability-api && npx serverless deploy \
+            npx serverless deploy \
             --stage dev
 
       - name: Deploy service to [MANUAL] AWS
