@@ -1,4 +1,4 @@
 # serverless-functions
 A prototype for Serverless Functions
 
-Test 6
+Test 7
