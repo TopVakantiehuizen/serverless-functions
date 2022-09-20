@@ -22,14 +22,14 @@ jobs:
     defaults:
       run:
         # can be a dynamic path, so we can reuse this workflow for multiple serverless functions
-        working-directory: ${{ WORKING_DIRECTORY }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
     steps:
       - name: Notify about starting this deployment 
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ REPOSITORY }}
+          repository: ${{ env.REPOSITORY }}
           number: ${{ github.event.number }}
           id: deploy-preview
           message: 'Starting deployment of this pull request.'
@@ -58,7 +58,7 @@ jobs:
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ REPOSITORY }}
+          repository: ${{ env.REPOSITORY }}
           number: ${{ github.event.number }}
           id: deploy-preview
           message: 'Deployment of a preview for this pull request was successful.'
