@@ -16,7 +16,7 @@ on:
 
 jobs:
   deploy-serverless-functions:
-    name: OS ${{ matrix.workflow_file }}
+    name: Deploy ${{ matrix.workflow_file }}
     runs-on: ${{ matrix.workflow_file }}
     strategy:
       matrix:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Print JOB_NAME
         run: |
-          echo "JOB NAME:" ${{ env.JOB_NAME }}
+          echo "JOB NAME:" ${{ env.JOB_NAME }}/deploy-workflow.yml
 
 
 
