@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        workflow_files:
+        os:
           - ubuntu-18.04
           - ubuntu-20.04
     steps:
