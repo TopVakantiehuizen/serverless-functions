@@ -1,4 +1,4 @@
-name: [PROD] Deploy to AWS
+name: (DEV) Deploy to AWS
 
 env:
   WORKING_DIRECTORY: "serverless-availability-api"
