@@ -58,7 +58,7 @@ jobs:
             --stage prod
 
       - name: Notify about the successfull deployment
-        if: github.event_name == 'pull_request' && ${{ steps.deployment_prod.outputs.stdout }}
+        if: steps.deployment_prod.outputs.stdout && github.event_name == 'pull_request'
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
