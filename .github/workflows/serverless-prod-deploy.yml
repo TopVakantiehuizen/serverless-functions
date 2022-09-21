@@ -15,18 +15,18 @@ on:
 #       - '$WORKING_DIRECTORY/**'
 
 jobs:
-  my-job:
-    name: OS ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  deploy-serverless-functions:
+    name: OS ${{ matrix.workflow_file }}
+    runs-on: ${{ matrix.workflow_file }}
     strategy:
       matrix:
-        os:
-          - ubuntu-18.04
-          - ubuntu-20.04
+        workflow_file:
+          - serverless-availability-api
+          - serverless-booking-api
     steps:
       - run: echo ${{ github.job }} # Will only return the job_id: "my-job"
       - run: |
-          JOB_NAME="OS ${{ matrix.os }}"
+          JOB_NAME="DEPLOY ${{ matrix.workflow_file }} to Production"
           echo $JOB_NAME
           echo "JOB_NAME=$JOB_NAME" >> $GITHUB_ENV
 
