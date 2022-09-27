@@ -48,7 +48,7 @@ jobs:
         
       - name: Deploy specific API
         # working-directory: ${{env.DIR_PATH}}
-        working-directory: apps/server-api-1/
+        working-directory: apps/server-api-1
         run: ls -l
             
 
