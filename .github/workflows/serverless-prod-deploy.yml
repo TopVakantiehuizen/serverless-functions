@@ -4,6 +4,7 @@ env:
   WORKING_DIRECTORY: "serverless-availability-api"
   PACKAGE_LOCK_DIRECTORY: "serverless-availability-api/package-lock.json"
   REPOSITORY: "TopVakantiehuizen/serverless-functions"
+  DEPLOYMENT_FILE: "serverless.yml"
 
 on:
   push:
@@ -11,7 +12,7 @@ on:
 
   pull_request:
     types: [opened]
-#     paths: 
+#     paths:
 #       - '$WORKING_DIRECTORY/**'
 
 jobs:
@@ -21,16 +22,16 @@ jobs:
       dir: ${{ steps.set-dirs.outputs.dir }} # generate output name dir by using inner step output
     steps:
       - uses: actions/checkout@v2
-      
+
         # Give it an id to handle to get step outputs in the outputs key above
       - id: set-dirs
-      
+
         # Define step output named dir base on ls command transformed to JSON thanks to jq
         run: cd apps && echo "::set-output name=dir::$(ls -d */ | jq -R -s -c 'split("\n")[:-1]')"
-       
+
   deployment:
     runs-on: ubuntu-latest
-    
+
     # Depends on previous job
     needs: [directories]
     strategy:
@@ -38,10 +39,10 @@ jobs:
         # List matrix strategy from directories dynamically
         dir: ${{fromJson(needs.directories.outputs.dir)}}
     env:
-      DIR_PATH: "apps/${{matrix.dir}}deploy.yml"
+      DIR_PATH: "apps/${{matrix.dir}}${{env.DEPLOYMENT_FILE}}"
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Check deploy file exists
         id: check_files
         uses: andstor/file-existence-action@v1
@@ -51,7 +52,7 @@ jobs:
       - name: Deploy file exists
         if: steps.check_files.outputs.files_exists == 'true'
         run: echo "It exists !"
-            
+
 
 #   deploy-production:
 #     runs-on: ubuntu-latest
@@ -61,7 +62,7 @@ jobs:
 #         working-directory: ${{ env.WORKING_DIRECTORY }}
 
 #     steps:
-#       - name: Notify about starting this deployment 
+#       - name: Notify about starting this deployment
 #         if: github.event_name == 'pull_request'
 #         uses: hasura/comment-progress@v2.1.0
 #         with:
