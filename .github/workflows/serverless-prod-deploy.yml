@@ -26,13 +26,13 @@ jobs:
     steps:
       - run: echo ${{ github.job }} # Will only return the job_id: "my-job"
       - run: |
-          JOB_NAME="OS ${{ matrix.os }}"
-          echo $JOB_NAME
-          echo "JOB_NAME=$JOB_NAME" >> $GITHUB_ENV
+          SERVERLESS_API_PATH="OS ${{ matrix.os }}"
+          echo $SERVERLESS_API_PATH
+          echo "SERVERLESS_API_PATH=$SERVERLESS_API_PATH" >> $GITHUB_ENV
 
-      - name: Print JOB_NAME
+      - name: Print SERVERLESS_API_PATH
         run: |
-          echo "JOB NAME:" ${{ env.JOB_NAME }}
+          echo "JOB NAME:" ${{ env.SERVERLESS_API_PATH }}
 
 #   deploy-production:
 #     runs-on: ubuntu-latest
