@@ -21,8 +21,8 @@ jobs:
     strategy:
       matrix:
         serverless_api_path:
-          - "serverless-availability-api"
-          - "serverless-booking-api"
+          - 'serverless-availability-api'
+          - 'serverless-booking-api'
     steps:
       - run: echo ${{ github.job }} # Will only return the job_id: "my-job"
       - run: |
