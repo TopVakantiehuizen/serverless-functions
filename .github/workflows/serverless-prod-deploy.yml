@@ -42,15 +42,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Check deploy file exists
+      - name: Check serverless.yml file exists
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
-          files: "${{ env.DIR_PATH }}"
+          files: ${{ env.DIR_PATH }}
 
-      - name: Deploy file exists
+      - name: Deploy to AWS
         if: steps.check_files.outputs.files_exists == 'true'
-        run: echo "It exists !"
+        working-directory: ${{ env.DIR_PATH }}
+        run: |
+          npx serverless config credentials \
+          --provider aws \
+          --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+          --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+
+          npx serverless deploy \
+          --stage prod
 
 
 #   deploy-production:
