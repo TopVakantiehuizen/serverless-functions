@@ -32,7 +32,10 @@ jobs:
         dir: ${{fromJson(needs.directories.outputs.dir)}} # List matrix strategy from directories dynamically
     steps:
       - run: echo ${{matrix.dir}}
-      - run: echo ${{matrix}}
+      - run: printf ${{matrix}}
+      - run: |
+          printf '%s\n' "$matrix" > foo.json
+          cat foo.json
 
 #   deploy-production:
 #     runs-on: ubuntu-latest
