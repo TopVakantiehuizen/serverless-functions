@@ -45,6 +45,11 @@ jobs:
       - name: File exists
         if: steps.check_files.outputs.files_exists == 'true'
         run: echo "It exists !"
+        
+      - name: Deploy specific API
+        working-directory: ${{env.DIR_PATH}}
+        run: ls
+            
 
 #   deploy-production:
 #     runs-on: ubuntu-latest
