@@ -1,16 +1,11 @@
 name: (PROD) Deploy to AWS
 
-env:
-  WORKING_DIRECTORY: "serverless-availability-api"
-  PACKAGE_LOCK_DIRECTORY: "serverless-availability-api/package-lock.json"
-  REPOSITORY: "TopVakantiehuizen/serverless-functions"
-
 on:
   push:
     branches: [ 'main' ]
 
   pull_request:
-    types: [opened]
+    types: [ opened ]
 #     paths:
 #       - '$WORKING_DIRECTORY/**'
 
@@ -32,14 +27,16 @@ jobs:
     runs-on: ubuntu-latest
 
     # Depends on previous job
-    needs: [directories]
+    needs: [ directories ]
     strategy:
       matrix:
         # List matrix strategy from directories dynamically
         dir: ${{fromJson(needs.directories.outputs.dir)}}
     env:
-      SERVERLESS_FILE: 'apps/${{ matrix.dir }}serverless.yml'
       DIR_PATH: 'apps/${{ matrix.dir }}'
+      SERVERLESS_FILE: 'apps/${{ matrix.dir }}serverless.yml'
+      PACKAGE_LOCK_DIRECTORY: 'apps/${{ matrix.dir }}package-lock.json'
+
     steps:
       - uses: actions/checkout@v2
 
@@ -48,6 +45,18 @@ jobs:
         uses: andstor/file-existence-action@v1
         with:
           files: ${{ env.SERVERLESS_FILE }}
+
+      - uses: actions/setup-node@v3
+        if: steps.check_files.outputs.files_exists == 'true'
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PACKAGE_LOCK_DIRECTORY }}
+
+      - name: Install dependencies
+        if: steps.check_files.outputs.files_exists == 'true'
+        working-directory: ${{ env.DIR_PATH }}
+        run: npm ci
 
       - name: Deploy to AWS
         if: steps.check_files.outputs.files_exists == 'true'
