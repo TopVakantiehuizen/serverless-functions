@@ -31,10 +31,11 @@ jobs:
       matrix:
         dir: ${{fromJson(needs.directories.outputs.dir)}} # List matrix strategy from directories dynamically
     env:
-      DIR_PATH: "${{matrix.dir}}deploy.yml"
+      DIR_PATH: "apps/${{matrix.dir}}deploy.yml"
     steps:
       - run: echo $DIR_PATH
       - run: echo ${{matrix.dir}}
+      - run: echo ${{env.DIR_PATH}}
       
       - name: Check file existence
         id: check_files
