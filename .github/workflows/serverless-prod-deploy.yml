@@ -31,7 +31,7 @@ jobs:
       matrix:
         dir: ${{fromJson(needs.directories.outputs.dir)}} # List matrix strategy from directories dynamically
     env:
-      DIR_PATH: ${{matrix.dir}}
+      DIR_PATH: "${{matrix.dir}}deploy.yml"
     steps:
       - run: echo $DIR_PATH
       - run: echo ${{matrix.dir}}
