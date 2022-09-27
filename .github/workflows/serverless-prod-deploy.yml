@@ -39,7 +39,7 @@ jobs:
         # List matrix strategy from directories dynamically
         dir: ${{fromJson(needs.directories.outputs.dir)}}
     env:
-      DIR_PATH: "apps/${{matrix.dir}}${{DEPLOYMENT_FILE}}"
+      DIR_PATH: 'apps/${{ matrix.dir }}${{ DEPLOYMENT_FILE }}'
     steps:
       - uses: actions/checkout@v2
 
