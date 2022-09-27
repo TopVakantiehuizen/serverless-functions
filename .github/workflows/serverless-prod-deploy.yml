@@ -33,7 +33,7 @@ jobs:
     env:
       DIR_PATH: ${{matrix.dir}}
     steps:
-      - run: echo ${{DIR_PATH}}
+      - run: echo $DIR_PATH
       - run: echo ${{matrix.dir}}
       - run: printf ${{matrix}}
       - shell: bash
