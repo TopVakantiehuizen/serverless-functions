@@ -33,15 +33,14 @@ jobs:
     env:
       DIR_PATH: "apps/${{matrix.dir}}deploy.yml"
     steps:
-      - run: echo $DIR_PATH
-      - run: echo ${{matrix.dir}}
       - run: echo ${{env.DIR_PATH}}
+      - run: echo ${{matrix.dir}}
       
       - name: Check file existence
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
-          files: ${{ env.DIR_PATH }}
+          files: "${{ env.DIR_PATH }}, ./${{ env.DIR_PATH }}, /${{ env.DIR_PATH }}, **${{ env.DIR_PATH }}, **/${{ env.DIR_PATH }}"
 
       - name: File exists
         if: steps.check_files.outputs.files_exists == 'true'
