@@ -61,7 +61,7 @@ jobs:
           repository: ${{ env.REPOSITORY }}
           number: ${{ github.event.number }}
           id: deploy-production
-          message: 'Starting deployment of ${{ DIR_PATH }}.'
+          message: 'Starting deployment of ${{ env.DIR_PATH }}.'
 
       - uses: actions/setup-node@v3
         if: steps.check_files.outputs.files_exists == 'true'
