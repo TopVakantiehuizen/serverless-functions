@@ -1,19 +1,26 @@
 name: (PROD) Deploy to AWS
 
+env:
+  REPOSITORY: "TopVakantiehuizen/serverless-functions"
+
 on:
   push:
     branches: [ 'main' ]
 
   pull_request:
     types: [ opened ]
-#     paths:
-#       - '$WORKING_DIRECTORY/**'
+#    paths:
+#      - 'apps/**'
+#    branches:
+#      - 'main'
 
 jobs:
-  directories: # Job that list subdirectories for serverless deployment
+  # Job that list subdirectories for serverless deployment
+  directories:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.set-dirs.outputs.dir }} # generate output name dir by using inner step output
+      # generate output name dir by using inner step output
+      dir: ${{ steps.set-dirs.outputs.dir }}
     steps:
       - uses: actions/checkout@v2
 
@@ -46,6 +53,16 @@ jobs:
         with:
           files: ${{ env.SERVERLESS_FILE }}
 
+      - name: Notify about starting this deployment
+        if: github.event_name == 'pull_request'
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ env.REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-production
+          message: 'Starting deployment of ${{ DIR_PATH }}.'
+
       - uses: actions/setup-node@v3
         if: steps.check_files.outputs.files_exists == 'true'
         with:
@@ -61,6 +78,7 @@ jobs:
       - name: Deploy to AWS
         if: steps.check_files.outputs.files_exists == 'true'
         working-directory: ${{ env.DIR_PATH }}
+        id: deployment_prod
         run: |
           npx serverless config credentials \
           --provider aws \
@@ -70,67 +88,24 @@ jobs:
           npx serverless deploy \
           --stage prod
 
+      - name: Notify about the successful deployment
+        if: steps.deployment_prod.outputs.stdout && github.event_name == 'pull_request'
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ env.REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-production
+          message: ${{ steps.deployment_prod.outputs.stdout }}
+          append: true
 
-#   deploy-production:
-#     runs-on: ubuntu-latest
-#     environment: production
-#     defaults:
-#       run:
-#         working-directory: ${{ env.WORKING_DIRECTORY }}
-
-#     steps:
-#       - name: Notify about starting this deployment
-#         if: github.event_name == 'pull_request'
-#         uses: hasura/comment-progress@v2.1.0
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-#           repository: ${{ env.REPOSITORY }}
-#           number: ${{ github.event.number }}
-#           id: deploy-production
-#           message: 'Starting deployment of this pull request.'
-
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-node@v3
-#         with:
-#           node-version: 16
-#           cache: 'npm'
-#           cache-dependency-path: ${{ env.PACKAGE_LOCK_DIRECTORY }}
-
-#       - name: Install dependencies
-#         run: npm ci
-
-#       - name: Deploy service to [PRODUCTION] AWS
-#         if: "${{ github.event.inputs.stage == '' }}"
-#         uses: mathiasvr/command-output@v1
-#         id: deployment_prod
-#         with:
-#           run: |
-#             cd serverless-availability-api && npx serverless config credentials \
-#             --provider aws \
-#             --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
-#             --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-
-#             npx serverless deploy \
-#             --stage prod
-
-#       - name: Notify about the successfull deployment
-#         if: steps.deployment_prod.outputs.stdout && github.event_name == 'pull_request'
-#         uses: hasura/comment-progress@v2.1.0
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-#           repository: ${{ env.REPOSITORY }}
-#           number: ${{ github.event.number }}
-#           id: deploy-production
-#           message: ${{ steps.deployment_prod.outputs.stdout }}
-#           append: true
-
-#       - name: Notify about the failed deployment
-#         if: steps.cmd.outputs.stderr && github.event_name == 'pull_request'
-#         uses: hasura/comment-progress@v2.1.0
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-#           repository: ${{ env.REPOSITORY }}
-#           number: ${{ github.event.number }}
-#           id: deploy-production
-#           message: ${{ steps.cmd.outputs.stderr }}
-#           append: true
+      - name: Notify about the failed deployment
+        if: steps.cmd.outputs.stderr && github.event_name == 'pull_request'
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ env.REPOSITORY }}
+          number: ${{ github.event.number }}
+          id: deploy-production
+          message: ${{ steps.cmd.outputs.stderr }}
+          append: true
