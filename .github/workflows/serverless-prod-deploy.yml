@@ -16,17 +16,17 @@ on:
 
 jobs:
   deployment:
-    name: OS ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Serverless API ${{ matrix.serverless_api_path }}
+    runs-on: ${{ matrix.serverless_api_path }}
     strategy:
       matrix:
-        os:
+        serverless_api_path:
           - ubuntu-18.04
           - ubuntu-20.04
     steps:
       - run: echo ${{ github.job }} # Will only return the job_id: "my-job"
       - run: |
-          SERVERLESS_API_PATH="OS ${{ matrix.os }}"
+          SERVERLESS_API_PATH="SERVERLESS_API_PATH ${{ matrix.serverless_api_path }}"
           echo $SERVERLESS_API_PATH
           echo "SERVERLESS_API_PATH=$SERVERLESS_API_PATH" >> $GITHUB_ENV
 
