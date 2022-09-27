@@ -57,15 +57,15 @@ jobs:
         with:
           files: ${{ env.SERVERLESS_FILE }}
 
-      - name: Notify about starting this deployment
-        if: github.event_name == 'pull_request'
-        uses: hasura/comment-progress@v2.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.REPOSITORY }}
-          number: ${{ github.event.number }}
-          id: deploy-production
-          message: 'Starting deployment of ${{ env.DIR_PATH }}.'
+#      - name: Notify about starting this deployment
+#        if: github.event_name == 'pull_request'
+#        uses: hasura/comment-progress@v2.1.0
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          repository: ${{ env.REPOSITORY }}
+#          number: ${{ github.event.number }}
+#          id: deploy-production
+#          message: 'Starting deployment of ${{ env.DIR_PATH }}.'
 
       - uses: actions/setup-node@v3
         if: steps.check_files.outputs.files_exists == 'true'
@@ -92,13 +92,13 @@ jobs:
           npx serverless deploy \
           --stage prod
 
-      - name: Notify about the deployment
-        if: steps.check_files.outputs.files_exists == 'true' && github.event_name == 'pull_request'
-        uses: hasura/comment-progress@v2.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.REPOSITORY }}
-          number: ${{ github.event.number }}
-          id: deploy-production
-          message: ${{ steps.deployment_prod.outputs.stdout }}
-          recreate: true
+#      - name: Notify about the deployment
+#        if: steps.check_files.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+#        uses: hasura/comment-progress@v2.1.0
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          repository: ${{ env.REPOSITORY }}
+#          number: ${{ github.event.number }}
+#          id: deploy-production
+#          message: ${{ steps.deployment_prod.outputs.stdout }}
+#          recreate: true
