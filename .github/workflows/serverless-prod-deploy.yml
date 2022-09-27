@@ -13,6 +13,10 @@ on:
 #      - 'apps/**'
 #    branches:
 #      - 'main'
+#    paths-ignore:
+#      - '**.md'
+#      - 'apps/website/**'
+#      - 'apps/importer/**'
 
 jobs:
   # Job that list subdirectories for serverless deployment
@@ -88,8 +92,8 @@ jobs:
           npx serverless deploy \
           --stage prod
 
-      - name: Notify about the successful deployment
-        if: steps.deployment_prod.outputs.stdout && github.event_name == 'pull_request'
+      - name: Notify about the deployment
+        if: steps.check_files.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -97,15 +101,4 @@ jobs:
           number: ${{ github.event.number }}
           id: deploy-production
           message: ${{ steps.deployment_prod.outputs.stdout }}
-          append: true
-
-      - name: Notify about the failed deployment
-        if: steps.cmd.outputs.stderr && github.event_name == 'pull_request'
-        uses: hasura/comment-progress@v2.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.REPOSITORY }}
-          number: ${{ github.event.number }}
-          id: deploy-production
-          message: ${{ steps.cmd.outputs.stderr }}
-          append: true
+          recreate: true
