@@ -33,8 +33,11 @@ jobs:
     steps:
       - run: echo ${{matrix.dir}}
       - run: printf ${{matrix}}
-      - run: |
-          printf '%s\n' "$matrix" > foo.json
+      - shell: bash
+        env:
+          JSON_DOC: ${{ toJSON(matrix) }}
+        run: |
+          printf '%s\n' "$JSON_DOC" > foo.json
           cat foo.json
 
 #   deploy-production:
