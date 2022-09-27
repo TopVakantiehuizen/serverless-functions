@@ -30,7 +30,10 @@ jobs:
     strategy:
       matrix:
         dir: ${{fromJson(needs.directories.outputs.dir)}} # List matrix strategy from directories dynamically
+    env:
+      DIR_PATH: ${{matrix.dir}}
     steps:
+      - run: echo ${{DIR_PATH}}
       - run: echo ${{matrix.dir}}
       - run: printf ${{matrix}}
       - shell: bash
