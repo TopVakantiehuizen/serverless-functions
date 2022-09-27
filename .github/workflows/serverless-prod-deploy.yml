@@ -4,7 +4,6 @@ env:
   WORKING_DIRECTORY: "serverless-availability-api"
   PACKAGE_LOCK_DIRECTORY: "serverless-availability-api/package-lock.json"
   REPOSITORY: "TopVakantiehuizen/serverless-functions"
-  DEPLOYMENT_FILE: "serverless.yml"
 
 on:
   push:
@@ -39,7 +38,7 @@ jobs:
         # List matrix strategy from directories dynamically
         dir: ${{fromJson(needs.directories.outputs.dir)}}
     env:
-      DIR_PATH: 'apps/${{ matrix.dir }}${{ DEPLOYMENT_FILE }}'
+      DIR_PATH: 'apps/${{ matrix.dir }}serverless.yml'
     steps:
       - uses: actions/checkout@v2
 
